@@ -66,7 +66,10 @@ async def main():
 
     asyncio.create_task(asyncio.start_server(webserver.webserver, "0.0.0.0", 80))
 
-    LOOP_SLEEP = 1000
+    if board.pico():
+        LOOP_SLEEP = 250
+    else:
+        LOOP_SLEEP = 1000
     LCD_TIMER = 60
 
     lastLastEvent = button.lastEvent()
@@ -122,7 +125,7 @@ async def main():
                 buzzer.play(page%4)
 
         sleepMs = LOOP_SLEEP - time.ticks_diff(time.ticks_ms(), prevTickMs)
-        await asyncio.sleep_ms(min(0, sleepMs))
+        await asyncio.sleep_ms(max(0, sleepMs))
         prevTickMs = time.ticks_ms()
 
         if lcdOnTimer != 0:
